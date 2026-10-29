@@ -1,3 +1,5 @@
+<p align="center"><img src=".github/assets/oathwave-banner.png" alt="oathwave banner" width="100%"></p>
+
 # Oathwave
 
 > **Swear it in plain text. Keep it or break it.**
