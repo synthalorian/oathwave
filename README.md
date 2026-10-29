@@ -45,7 +45,9 @@ Oaths are numbered by their position in the file (1, 2, 3...), counting only
 oath lines. `overdue` exits with status `1` when something is overdue, so you
 can wire it into a shell prompt or a pre-commit hook as a guilt engine.
 
-Errors (bad date, unknown number, malformed line) exit with status `2`.
+Errors (bad date, unknown number, malformed line, empty or multi-line oath
+text, an oath file that can't be read or written) print one line and exit
+with status `2`.
 
 ### Choosing the file
 
@@ -99,7 +101,7 @@ src/oathwave/__init__.py   project NAME constant + version
 src/oathwave/cli.py        argparse commands
 src/oathwave/store.py      OATHS.txt parsing and writing
 src/oathwave/colors.py     the ONLY place ANSI codes live
-tests/                    pytest suite
+tests/                    pytest suite (test_rename.py runs the RENAME.md recipe)
 ```
 
 Renaming the project? See [RENAME.md](RENAME.md).

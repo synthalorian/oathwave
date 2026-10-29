@@ -19,7 +19,10 @@ def parse_due(value: str, today: dt.date) -> dt.date:
             n = int(value[1:-1])
         except ValueError:
             raise OathError(f"bad relative due {value!r} (try +3d or +2w)") from None
-        return today + dt.timedelta(days=n * (7 if value[-1] == "w" else 1))
+        try:
+            return today + dt.timedelta(days=n * (7 if value[-1] == "w" else 1))
+        except OverflowError:
+            raise OathError(f"relative due {value!r} is too far out (dates stop at {dt.date.max})") from None
     return parse_date(value)
 
 
@@ -66,9 +69,10 @@ def run(args: argparse.Namespace, out: TextIO, pal: Palette) -> int:
 
     if args.command == "add":
         due = parse_due(args.due, today) if args.due else None
-        number = book.add(Oath("OPEN", today, due, " ".join(args.text)))
+        oath = Oath("OPEN", today, due, " ".join(args.text))
+        number = book.add(oath)
         book.save()
-        print(f"{pal.neon('>> oath sworn')} {pal.magenta(f'#{number}')} {pal.cyan(' '.join(args.text))}", file=out)
+        print(f"{pal.neon('>> oath sworn')} {pal.magenta(f'#{number}')} {pal.cyan(oath.text)}", file=out)
         return 0
 
     if args.command in ("done", "break"):
