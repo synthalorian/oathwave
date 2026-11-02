@@ -73,9 +73,12 @@ NEW=newname
 NEW_TITLE=$(printf '%s' "$NEW" | awk '{ print toupper(substr($0, 1, 1)) substr($0, 2) }')
 NEW_UPPER=$(printf '%s' "$NEW" | tr '[:lower:]' '[:upper:]')
 git mv src/oathwave "src/$NEW"
-grep -rli oathwave --exclude-dir=.git --exclude-dir=.pytest_cache --exclude-dir=__pycache__ . \
+git ls-files | grep oathwave | while IFS= read -r f; do
+  git mv "$f" "$(printf '%s' "$f" | sed "s/oathwave/$NEW/g")"
+done
+grep -rliI oathwave --exclude-dir=.git --exclude-dir=.pytest_cache --exclude-dir=__pycache__ . \
   | xargs sed -i "s/oathwave/$NEW/g; s/Oathwave/$NEW_TITLE/g; s/OATHWAVE/$NEW_UPPER/g"
-grep -rni oathwave --exclude-dir=.git --exclude-dir=.pytest_cache --exclude-dir=__pycache__ . \
+grep -rniI oathwave --exclude-dir=.git --exclude-dir=.pytest_cache --exclude-dir=__pycache__ . \
   || echo "no stragglers"
 python3 -m pytest -q
 ```

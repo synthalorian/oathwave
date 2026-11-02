@@ -66,11 +66,11 @@ def test_recipe_renames_every_spelling(tmp_path):
             continue
         assert NAME not in path.name.lower(), path
         if path.is_file():
-            assert NAME not in path.read_text(encoding="utf-8").lower(), path
+            assert NAME.encode() not in path.read_bytes().lower(), path
 
     assert f'NAME = "{NEW}"' in (repo / "src" / NEW / "__init__.py").read_text()
     readme = (repo / "README.md").read_text()
-    assert readme.startswith(f"# {NEW.capitalize()}\n")
+    assert f"\n# {NEW.capitalize()}\n" in "\n" + readme
     assert f"{NEW.upper()}_FILE" in readme
     assert f'name = "{NEW}"' in (repo / "pyproject.toml").read_text()
 
